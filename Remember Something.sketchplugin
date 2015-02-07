@@ -1,0 +1,36 @@
+#import 'lib/config.js'
+
+function run() {
+	
+	var alert = [COSAlertWindow new];
+	[alert addButtonWithTitle: 'OK'];
+	[alert addButtonWithTitle: 'Cancel'];
+
+	[alert setMessageText: 'Awesome Plugin Settings']
+
+	[alert addTextLabelWithValue: 'My Name'] // 0
+	[alert addTextFieldWithValue: getDefault('myName')] // 1
+
+	[alert addTextLabelWithValue: 'My Age'] // 2
+	[alert addTextFieldWithValue: getDefault('myAge')] // 3
+
+	if ([alert runModal] == "1000") {
+		var newName = valueAtIndex(alert, 1)
+		setDefault('myName', newName)
+
+		var newAge = valueAtIndex(alert, 3)
+		setDefault('myAge', parseInt(newAge))
+	}
+	
+}
+
+function elementAtIndex (view, index) {
+  return [view viewAtIndex: index]
+}
+
+function valueAtIndex (view, index) {
+  var element = elementAtIndex(view, index);
+  return [element stringValue]
+}
+
+run()
