@@ -1,34 +1,66 @@
-#import 'lib/config.js'
+@import 'lib/pluginDefaults.js'
 
-function run() {
+//--------------------------------------
+//  Initialize Defaults
+//--------------------------------------
+
+var presets = {
+	myName: "Sketchy Jones",
+	myAge: 25
+}
+
+// Plugin Domain must be unique for your plugin
+var pluginDomain = "com.yoursite.sketch-remember"
+
+var userDefaults = initDefaults(pluginDomain, presets)
+
+//--------------------------------------
+
+
+var run = function() {
 	
 	var alert = [COSAlertWindow new];
 	[alert addButtonWithTitle: 'OK'];
 	[alert addButtonWithTitle: 'Cancel'];
 
+	[alert addButtonWithTitle: 'Reset Defaults'];
+
 	[alert setMessageText: 'Awesome Plugin Settings']
 
 	[alert addTextLabelWithValue: 'My Name'] // 0
-	[alert addTextFieldWithValue: getDefault('myName')] // 1
+	[alert addTextFieldWithValue: userDefaults.myName] // 1
 
 	[alert addTextLabelWithValue: 'My Age'] // 2
-	[alert addTextFieldWithValue: getDefault('myAge')] // 3
+	[alert addTextFieldWithValue: userDefaults.myAge] // 3
 
-	if ([alert runModal] == "1000") {
-		var newName = valueAtIndex(alert, 1)
-		setDefault('myName', newName)
+	[alert addTextLabelWithValue: 'My Nationality'] // 4
+	[alert addTextFieldWithValue: userDefaults.myNationality || ""] // 5
 
-		var newAge = valueAtIndex(alert, 3)
-		setDefault('myAge', parseInt(newAge))
+	var response = [alert runModal]
+
+	if (response == "1000") {
+
+		userDefaults.myName = valueAtIndex(alert, 1)
+
+		userDefaults.myAge = parseInt(valueAtIndex(alert, 3))
+
+		userDefaults.myNationality = valueAtIndex(alert, 5)
+
+		saveDefaults(userDefaults)
+
+	} else if (response == "1002") {
+
+		saveDefaults(presets)
+
 	}
 	
 }
 
-function elementAtIndex (view, index) {
+var elementAtIndex = function(view, index) {
   return [view viewAtIndex: index]
 }
 
-function valueAtIndex (view, index) {
+var valueAtIndex = function(view, index) {
   var element = elementAtIndex(view, index);
   return [element stringValue]
 }
